@@ -1,0 +1,30 @@
+public class LaptopBookingHandler {
+
+    public static void sendEmailNotification(List<Laptop_Bookings__c> lapList) {
+        List<Messaging.SingleEmailMessage> emails = new List<Messaging.SingleEmailMessage>();
+
+        for (Laptop_Bookings__c lap : lapList) {
+            if (lap.Email__c != null && lap.Email__c.contains('@')) { // Validate email field
+                Messaging.SingleEmailMessage email = new Messaging.SingleEmailMessage();
+
+                email.setToAddresses(new List<String>{lap.Email__c});
+                email.setSubject('Welcome to our company');
+
+                String body = 'Dear ' + lap.Name + ', \n';
+                body += 'Welcome to Laptop Rentals! You have been seen as a valuable customer to us.\n' +
+                        'Please continue your journey with us, while we try to provide you with good quality resources. \n' +
+                        'Laptop Amount = ' + lap.Amount__c + ' \n' +
+                        'Core type = ' + lap.core__c + ' \n' +
+                        'Laptop type = ' + lap.Laptop_names__c;
+
+                email.setPlainTextBody(body);
+                emails.add(email);
+            }
+        }
+
+        // Send emails only if there are valid email messages
+        if (!emails.isEmpty()) {
+            Messaging.sendEmail(emails);
+        }
+    }
+}
